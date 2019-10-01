@@ -1,8 +1,16 @@
+class page {
+  constructor(tittel, side, url) {
+    this.tittel = tittel;
+    this.side = side;
+    this.url = url;
+  }
+}
+
 var http = require('http');
 
 http.createServer(function (req, res) {
     let url = req.url;
-    let page = "index";
+    let webpage = "index";
 
     let sider = [
     "index", "Hovedside", 
@@ -11,26 +19,40 @@ http.createServer(function (req, res) {
     "nyheter", "Siste nytt"
   ];
 
+  let pages = [];
+
+  pages[0] = new page("Hovedside", "index", "/");
+  pages[1] = new page("Om oss", "omoss", "/omoss");
+  pages[2] = new page("Kontaktinformasjon", "kontakt", "/kontakt");
+  pages[3] = new page("Siste nytt", "nyheter", "/nyheter");
+
     if (url == "/") {
-      page = "index"
+      webpage = "index"
     } else if (url == "/omoss") {
-      page = "omoss"
+      webpage = "omoss"
     } else if (url == "/kontakt") {
-      page = "kontakt"
+      webpage = "kontakt"
     }
-    head(res, page, sider);
+
+    for (let i = 0; i != pages.length; i++) {
+      if (url == pages[i].url) {
+        webpage = pages[i].page;
+      }
+    }
+
+    head(res, webpage, sider);
     res.write("<h1>" + req.url + "</h1>");
     res.write('Hello World!'); //write a response to the client
   
     meny(res);
-    innhold(res, page);
+    innhold(res, webpage);
     fot(res);
 
     res.end(); //end the response
   }).listen(8080); //the server object listens on port 8080 
 
 // TODO: lik head section
-function head(res, page, sider) {
+function head(res, webpage, sider) {
 
   let tittel = "Fredag";
   // Gammel hardkoda versjon
@@ -43,7 +65,7 @@ function head(res, page, sider) {
 */
   let len = sider.length;
   for (let i = 0; i < len; i += 2) {
-      if (sider[i] == page) {
+      if (sider[i] == webpage) {
         // tittel = sider[i + 1];
         // tittel var før inni title-tag
         res.write("<html><head><title>" + sider[i + 1] + "</title></head>");
@@ -60,6 +82,7 @@ function meny(res) {
   menyvalg(res, "Hovedside", "/");
   menyvalg(res, "Om oss", "/omoss");
   menyvalg(res, "Kontakt", "/kontakt");
+  menyvalg(res, "Siste nytt", "/nyheter");
   
   res.write("</ul>");
 }
@@ -68,7 +91,7 @@ function menyvalg(res, tekst, link) {
   res.write("<li><a href=\"" + link + "\">" + tekst + "</a></li>" );
 }
 
-function innhold(res, page) {
+function innhold(res, webpage) {
 
   let innhold = "Dette innholdet mangler"
 /*
@@ -84,7 +107,7 @@ function innhold(res, page) {
   // versjon 2.0
 
 
-  res.write("\n<p class=\"innhold innhold-" + page + "\">" + innhold + "</p>");
+  res.write("\n<p class=\"innhold innhold-" + webpage + "\">" + innhold + "</p>");
 }
 
 function fot(res) {
