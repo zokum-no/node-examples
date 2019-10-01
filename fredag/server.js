@@ -36,10 +36,10 @@ http.createServer(function (req, res) {
 
     for (let i = 0; i != pages.length; i++) {
       if (url == pages[i].url) {
-        webpage = pages[i].page;
+        webpage = pages[i].side;
       }
     }
-
+  
     head(res, webpage, sider);
     res.write("<h1>" + req.url + "</h1>");
     res.write('Hello World!'); //write a response to the client
@@ -72,6 +72,7 @@ function head(res, webpage, sider) {
         break;
       }
   }
+  // res.write("oops" + webpage + "1");
 }
 // TODO: meny
 // TODO: innhold
