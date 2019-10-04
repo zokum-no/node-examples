@@ -37,10 +37,12 @@ http.createServer(function (req, res) {
     for (let i = 0; i != pages.length; i++) {
       if (url == pages[i].url) {
         webpage = pages[i].side;
+        currentPage = pages[i];
       }
     }
   
-    head(res, webpage, sider);
+    // objektet, ikke webpage
+    head(res, currentPage, sider);
     res.write("<h1>" + req.url + "</h1>");
     res.write('Hello World!'); //write a response to the client
   
@@ -52,27 +54,9 @@ http.createServer(function (req, res) {
   }).listen(8080); //the server object listens on port 8080 
 
 // TODO: lik head section
-function head(res, webpage, sider) {
-
-  let tittel = "Fredag";
-  // Gammel hardkoda versjon
-  /*
-  if (page == "omoss") {
-    tittel = "Om oss";
-  } else if (page == "kontakt") {
-    tittel = "Kontaktinformasjon";
-  }
-*/
-  let len = sider.length;
-  for (let i = 0; i < len; i += 2) {
-      if (sider[i] == webpage) {
-        // tittel = sider[i + 1];
-        // tittel var før inni title-tag
-        res.write("<html><head><title>" + sider[i + 1] + "</title></head>");
-        break;
-      }
-  }
-  // res.write("oops" + webpage + "1");
+function head(res, currentPage, sider) {
+  res.write("<html><head><title>" 
+  + currentPage.tittel + "</title></head>");
 }
 // TODO: meny
 // TODO: innhold
