@@ -129,7 +129,14 @@ function css(res) {
 function db_hent(res, con, sporring) {
 	con.query(sporring, ( err, rows ) => {
     // do something with the results here
-	res.write(rows[1].design);
+	for (var i = 0; i != rows.length; i++) {
+		let knr = i + 1;
+		res.write("Katt #" + knr + " "); 
+		res.write(rows[i].navn);
+		res.write(" har følgende utseende: ");
+		res.write(rows[i].design);
+		res.write("<br/>");
+	}
 	res.end();
 } );
 }
