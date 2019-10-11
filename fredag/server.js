@@ -12,67 +12,42 @@ http.createServer(function (req, res) {
     let url = req.url;
     let webpage = "index";
 
-    let sider = [
-    "index", "Hovedside", 
-    "omoss", "Om oss",
-    "kontakt", "Kontaktinformasjon",
-    "nyheter", "Siste nytt"
-  ];
 
-  let pages = [];
+    let pages = [];
 
-  pages[0] = new page("Hovedside", "index", "/");
-  pages[1] = new page("Om oss", "omoss", "/omoss");
-  pages[2] = new page("Kontaktinformasjon", "kontakt", "/kontakt");
-  pages[3] = new page("Siste nytt", "nyheter", "/nyheter");
+    pages[0] = new page("Hovedside", "index", "/");
+    pages[1] = new page("Om oss", "omoss", "/omoss");
+    pages[2] = new page("Kontaktinformasjon", "kontakt", "/kontakt");
+    pages[3] = new page("Siste nytt", "nyheter", "/nyheter");
+    pages[4] = new page("css", "css", "/style.css");
 
-    if (url == "/") {
-      webpage = "index"
-    } else if (url == "/omoss") {
-      webpage = "omoss"
-    } else if (url == "/kontakt") {
-      webpage = "kontakt"
-    }
-
+    currentPage = pages[0];
     for (let i = 0; i != pages.length; i++) {
       if (url == pages[i].url) {
         webpage = pages[i].side;
+        currentPage = pages[i];
       }
     }
   
-    head(res, webpage, sider);
-    res.write("<h1>" + req.url + "</h1>");
-    res.write('Hello World!'); //write a response to the client
-  
-    meny(res);
-    innhold(res, webpage);
-    fot(res);
 
+    if (webpage == "css") {
+      css(res);
+    } else {
+      head(res, currentPage);
+      res.write("<h1>" + req.url + "</h1>");
+      res.write('Hello World!'); //write a response to the client
+  
+      meny(res);
+      innhold(res, webpage);
+      fot(res);
+    }
     res.end(); //end the response
   }).listen(8080); //the server object listens on port 8080 
 
 // TODO: lik head section
-function head(res, webpage, sider) {
-
-  let tittel = "Fredag";
-  // Gammel hardkoda versjon
-  /*
-  if (page == "omoss") {
-    tittel = "Om oss";
-  } else if (page == "kontakt") {
-    tittel = "Kontaktinformasjon";
-  }
-*/
-  let len = sider.length;
-  for (let i = 0; i < len; i += 2) {
-      if (sider[i] == webpage) {
-        // tittel = sider[i + 1];
-        // tittel var før inni title-tag
-        res.write("<html><head><title>" + sider[i + 1] + "</title></head>");
-        break;
-      }
-  }
-  // res.write("oops" + webpage + "1");
+function head(res, currentPage) {
+  res.write("<html><head><title>" 
+  + currentPage.tittel + "</title></head>");
 }
 // TODO: meny
 // TODO: innhold
@@ -113,4 +88,15 @@ function innhold(res, webpage) {
 
 function fot(res) {
   res.write("<p class=\"fot\">fot-tekst, hilsen fredagteamet</p>");
+}
+
+function css(res) {
+  // res.write("css-data");
+  lastfil(res, "style.css");
+
+}
+
+function lastfil(res, filnavn) {
+  var fs = require('fs');
+  res.write(fs.readFileSync(filnavn));
 }
