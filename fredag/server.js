@@ -17,6 +17,12 @@ var con = mysql.createConnection({
   database: "katt"
 });
 
+// kobler til databasen, EN gang
+con.connect(function(err) {
+  if (err) throw err;
+}
+);
+
 /*
 con.connect(function(err) {
   if (err) throw err;
@@ -57,10 +63,15 @@ http.createServer(function (req, res) {
       res.write('Hello World!'); //write a response to the client
   
       meny(res);
+
+      let svar = db_hent(res, con, "SELECT * FROM katt");
+      // console.log(svar);
+	// res.write(svar);
+
       innhold(res, webpage);
       fot(res);
     }
-    res.end(); //end the response
+    // res.end(); //end the response
   }).listen(8080); //the server object listens on port 8080 
 
 // TODO: lik head section
@@ -115,20 +126,14 @@ function css(res) {
 
 }
 
-function db_hent(con, sporring) {
-con.connect(function(err) {
-  if (err) throw err;
-  // con.query("SELECT * FROM katt", function (err, result, fields) {
-    con.query(sporring, function (err, result, fields) {
-    if (err) throw err;
-    // console.log(result);
-return result;
-  });
-});
+function db_hent(res, con, sporring) {
+	con.query(sporring, ( err, rows ) => {
+    // do something with the results here
+	res.write(rows[1].design);
+	res.end();
+} );
 }
-
-
 function lastfil(res, filnavn) {
-  var fs = require('fs');
-  res.write(fs.readFileSync(filnavn));
+	var fs = require('fs');
+	res.write(fs.readFileSync(filnavn));
 }
