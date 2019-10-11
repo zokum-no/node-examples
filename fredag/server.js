@@ -6,7 +6,26 @@ class page {
   }
 }
 
+// ln -s /usr/local/lib/node_modules node_modules
 var http = require('http');
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "katt",
+  password: "kattabase",
+  database: "katt"
+});
+
+/*
+con.connect(function(err) {
+  if (err) throw err;
+  con.query("SELECT * FROM katt", function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+  });
+});
+*/
 
 http.createServer(function (req, res) {
     let url = req.url;
@@ -95,6 +114,19 @@ function css(res) {
   lastfil(res, "style.css");
 
 }
+
+function db_hent(con, sporring) {
+con.connect(function(err) {
+  if (err) throw err;
+  // con.query("SELECT * FROM katt", function (err, result, fields) {
+    con.query(sporring, function (err, result, fields) {
+    if (err) throw err;
+    // console.log(result);
+return result;
+  });
+});
+}
+
 
 function lastfil(res, filnavn) {
   var fs = require('fs');
